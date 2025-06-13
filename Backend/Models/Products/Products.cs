@@ -28,6 +28,7 @@ namespace VagueVault.Backend.Models.Products
 
 
         public DateTime CreatedAt { get; set; }= DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; }
         public ICollection<ProductVariants> Variants { get; set; }
 
     }

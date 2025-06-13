@@ -7,7 +7,7 @@ namespace VagueVault.Backend.Models.Products
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(5)]
+        [MaxLength(20)]
         public string Name { get; set; }
 
         public ICollection<ProductVariants> Variants { get; set; }

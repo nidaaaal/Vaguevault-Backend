@@ -6,6 +6,8 @@ using VagueVault.Backend.Repositories.Implementations;
 using VagueVault.Backend.Repositories.Interface;
 using VagueVault.Backend.Services.Auth.Implementations;
 using VagueVault.Backend.Services.Auth.Interface;
+using VagueVault.Backend.Services.Product.Implimentations;
+using VagueVault.Backend.Services.Product.Interface;
 
 namespace VagueVault.Backend.Configurations
 {
@@ -18,11 +20,13 @@ namespace VagueVault.Backend.Configurations
         }
         public static void ConfigureRepository(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository,UserRepository>();   
+            services.AddScoped<IUserRepository,UserRepository>();
+            services.AddScoped<IProductRepository,ProductRepository>();
         }
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IProductServices,ProductServices>();
         }
 
         public static void ConfigureHelpers(this IServiceCollection services,IConfiguration configuration)

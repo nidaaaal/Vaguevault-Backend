@@ -25,6 +25,7 @@ namespace VagueVault.Backend.Data
 
             modelBuilder.ApplyConfiguration(new ConfigureProductRelation());
             modelBuilder.ApplyConfiguration(new ConfigureProductVariant());
+            ConfigureSeedData.Seed(modelBuilder);
 
             
         }
