@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security;
 using VagueVault.Backend.Helpers.Auth.Interface;
 using VagueVault.Backend.Models.Auth;
-using VagueVault.Backend.Services.Auth.Interface;
+using VagueVault.Backend.Services.Auth;
 using Vauguevault.Backend.DTOs.Auth;
 
 namespace VagueVault.Backend.Controllers

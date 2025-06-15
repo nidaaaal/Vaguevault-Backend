@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using VagueVault.Backend.Configurations;
 using VagueVault.Backend.Data;
+using VagueVault.Backend.Middleware;
 
 
 namespace VagueVault
@@ -27,54 +28,31 @@ namespace VagueVault
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                
             })
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"])),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
-    };
-});
 
-            // Add authorization
-            builder.Services.AddAuthorization();
-
-            builder.Services.AddSwaggerGen(c =>
+            .AddJwtBearer(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vague Vault API", Version = "v1" });
-
-                // Add JWT Auth to Swagger
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+             options.TokenValidationParameters = new TokenValidationParameters
+             {
+             ValidateIssuerSigningKey = true,
+             IssuerSigningKey = new SymmetricSecurityKey(
+             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"])),
+             ValidateIssuer = false,
+             ValidateAudience = false,
+             ValidateLifetime = true,
+             ClockSkew = TimeSpan.Zero
+              };
             });
 
+            // Add authorization
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                            policy.RequireRole("Admin"));
+            });
+
+            builder.Services.AddSwaggerWithJwt();
 
             builder.Services.ConfigureDbContext(builder.Configuration);
             builder.Services.ConfigureMapper();
@@ -94,6 +72,8 @@ namespace VagueVault
 
             app.UseHttpsRedirection();
 
+            app.UseMiddleware<ExceptionMiddleware>();   
+
             app.UseAuthentication();
 
             app.UseAuthorization();
@@ -101,11 +81,11 @@ namespace VagueVault
 
             app.MapControllers();
 
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var db = scope.ServiceProvider.GetRequiredService<VagueVaultDbContext>();
-            //    db.Database.Migrate();
-            //}
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<VagueVaultDbContext>();
+                db.Database.Migrate();
+            }
 
             app.Run();
         }

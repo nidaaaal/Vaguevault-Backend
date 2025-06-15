@@ -4,10 +4,8 @@ using VagueVault.Backend.Helpers.Auth.Implementations;
 using VagueVault.Backend.Helpers.Auth.Interface;
 using VagueVault.Backend.Repositories.Implementations;
 using VagueVault.Backend.Repositories.Interface;
-using VagueVault.Backend.Services.Auth.Implementations;
-using VagueVault.Backend.Services.Auth.Interface;
-using VagueVault.Backend.Services.Product.Implimentations;
-using VagueVault.Backend.Services.Product.Interface;
+using VagueVault.Backend.Services.Auth;
+using VagueVault.Backend.Services.Product;
 
 namespace VagueVault.Backend.Configurations
 {

@@ -5,10 +5,9 @@ using VagueVault.Backend.Data;
 using VagueVault.Backend.Helpers.Auth.Interface;
 using VagueVault.Backend.Models.Auth;
 using VagueVault.Backend.Repositories.Interface;
-using VagueVault.Backend.Services.Auth.Interface;
 using Vauguevault.Backend.DTOs.Auth;
 
-namespace VagueVault.Backend.Services.Auth.Implementations
+namespace VagueVault.Backend.Services.Auth
 {
     public class UserServices:IUserServices
     {
@@ -33,16 +32,17 @@ namespace VagueVault.Backend.Services.Auth.Implementations
 
         public async Task<Users> RegisterUsers(RegisterDto registerDto)
         {
-            var (validation, errorMessage) = _passwordValidator.ValidatePassword(registerDto.Password, registerDto.Username);
-            if (!validation)
-            {
-                throw new SecurityException($"Password Validation Failed :{errorMessage}");
-            }
             if (await _userRepository.GetUserByUsernameAsync(registerDto.Username) != null)
                 throw new InvalidOperationException("Username Already Exist");
             if (await _userRepository.GetUserByEmailAsync(registerDto.Email) != null)
                 throw new InvalidOperationException("Email Already Exist");
-           
+
+            var (validation, errorMessage) = _passwordValidator.ValidatePassword(registerDto.Password);
+            if (!validation)
+            {
+                throw new SecurityException($"Password Validation Failed :{errorMessage}");
+            }
+            
            
 
             var user = _mapper.Map<Users>(registerDto);  

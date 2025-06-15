@@ -3,7 +3,7 @@
     public interface IPasswordValidator
     {
 
-     (bool isValid, string message) ValidatePassword(string password,string username);
+     (bool isValid, string message) ValidatePassword(string password);
         
 
     }

@@ -23,7 +23,7 @@ namespace VagueVault.Backend.Models.Products
         public Categories Categories { get; set; }
 
         [Required]
-        public int StatusId {  get; set; }  
+        public int StatusId { get; set; } = 1;
         public Status Status { get; set; }  
 
 

@@ -16,8 +16,7 @@ namespace Vauguevault.Backend.DTOs.Auth
         public string Email { get; set; } = string.Empty;
 
         [Required]
-        [DataType(DataType.Password)]
-        [MinLength(12)]
+        [MinLength(8)]
         public string Password { get; set; } = string.Empty;
 
         [Required]

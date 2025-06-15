@@ -1,6 +1,6 @@
 ﻿using VagueVault.Backend.DTOs.Products;
 
-namespace VagueVault.Backend.Services.Product.Interface
+namespace VagueVault.Backend.Services.Product
 {
     public interface IProductServices
     {
@@ -9,5 +9,9 @@ namespace VagueVault.Backend.Services.Product.Interface
         Task<ProductDto?> CreateProductAsync(ProductDto product);
         Task<ProductDto?> UpdateProductAsync(int id, ProductDto product);
         Task<bool> DeleteProductAsync(int id);
+        Task<IEnumerable<ProductDto>?> GetProductBySearch(string search);
+        Task<IEnumerable<ProductDto>?> GetProductByCategoriesId(int id);
+        Task<ProductVariantDto?> CreateProductVariant(int id,ProductVariantDto productVariant);
+
     }
 }

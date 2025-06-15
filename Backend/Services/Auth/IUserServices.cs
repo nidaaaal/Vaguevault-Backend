@@ -1,7 +1,7 @@
 ﻿using VagueVault.Backend.Models.Auth;
 using Vauguevault.Backend.DTOs.Auth;
 
-namespace VagueVault.Backend.Services.Auth.Interface
+namespace VagueVault.Backend.Services.Auth
 {
     public interface IUserServices
     {
