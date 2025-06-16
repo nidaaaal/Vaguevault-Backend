@@ -6,6 +6,7 @@ using VagueVault.Backend.Repositories.Implementations;
 using VagueVault.Backend.Repositories.Interface;
 using VagueVault.Backend.Services.Auth;
 using VagueVault.Backend.Services.Product;
+using VagueVault.Backend.Services.User;
 
 namespace VagueVault.Backend.Configurations
 {
@@ -23,8 +24,11 @@ namespace VagueVault.Backend.Configurations
         }
         public static void ConfigureServices(this IServiceCollection services)
         {
-            services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IAuthenticationServices, AuthenticationServices>();
             services.AddScoped<IProductServices,ProductServices>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddScoped<IUserServices, UserServices>();  
+
         }
 
         public static void ConfigureHelpers(this IServiceCollection services,IConfiguration configuration)

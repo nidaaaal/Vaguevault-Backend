@@ -14,8 +14,8 @@ namespace VagueVault.Backend.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IUserServices _userServices;
-        public AuthenticationController (IUserServices userServices)
+        private readonly IAuthenticationServices _userServices;
+        public AuthenticationController (IAuthenticationServices userServices)
         {
             _userServices = userServices;
         }

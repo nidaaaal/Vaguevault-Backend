@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using VagueVault.Backend.Models.Products;
 
 namespace VagueVault.Backend.Models.Auth
 {
@@ -22,9 +23,14 @@ namespace VagueVault.Backend.Models.Auth
         public DateTime createdAt { get; set; }= DateTime.UtcNow;
         public DateTime? LastLogin { get; set; }
 
+        public DateTime? PasswordChangedAt { get; set; }
+
+        public DateTime? UsernameChangedAt { get; set; }
+
         public string Role { get; set; } = "User";
 
-        public string Status { get; set; } = "Active"; 
+        public int StatusId { get; set; } = 1;
+        public Status Status { get; set; } = null!;
 
         public static class Roles
         {
@@ -33,11 +39,5 @@ namespace VagueVault.Backend.Models.Auth
             public const string User = "User";  
         } 
 
-        public static class Statuses
-        {
-            public const string Active= "Active";
-            public const string Inactive = "Inactive";
-            public const string Suspended= "Suspended";
-        }
     }
 }

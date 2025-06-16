@@ -9,7 +9,7 @@ using Vauguevault.Backend.DTOs.Auth;
 
 namespace VagueVault.Backend.Services.Auth
 {
-    public class UserServices:IUserServices
+    public class AuthenticationServices:IAuthenticationServices
     {
         private readonly VagueVaultDbContext _context;
         private readonly IMapper _mapper;
@@ -17,7 +17,7 @@ namespace VagueVault.Backend.Services.Auth
         private readonly  IPasswordValidator _passwordValidator;
         private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtHelper _jwtHelper;
-        public UserServices(
+        public AuthenticationServices(
             IMapper mapper,IUserRepository repository,IPasswordHasher passwordHasher,IPasswordValidator passwordValidator,
             VagueVaultDbContext vagueVaultDbContext,IJwtHelper jwtHelper) 
         {
@@ -66,7 +66,8 @@ namespace VagueVault.Backend.Services.Auth
 
                     if (user.FailedLoginAttempts > 5)
                     {
-                        user.Status=Users.Statuses.Suspended;
+                        user.StatusId=6;
+
                         throw new Exception("Account suspended. Please contact support");
 
                     }

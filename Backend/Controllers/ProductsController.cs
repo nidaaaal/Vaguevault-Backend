@@ -8,7 +8,6 @@ using VagueVault.Backend.Services.Product;
 
 namespace VagueVault.Backend.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductsController : ControllerBase
@@ -28,6 +27,7 @@ namespace VagueVault.Backend.Controllers
             return Ok(data);
         }
 
+
         [HttpGet("By_Id")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -35,6 +35,9 @@ namespace VagueVault.Backend.Controllers
             if (data == null) return NotFound("No Product found!");
             return Ok(data);
         }
+
+
+
         [HttpGet("Search")]
         public async Task<IActionResult> Search([FromQuery] string search)
         {
@@ -43,33 +46,43 @@ namespace VagueVault.Backend.Controllers
         }
 
 
+
+        [HttpGet("By_Category")]
+        public async Task<IActionResult> GetByCategory(int id)
+        {
+            var data = await _productsService.GetProductByCategoriesId(id);
+            return data == null ? NotFound(data) : Ok(data);
+        }
+
+
+
+
         [Authorize(Policy = "AdminOnly")]
         [HttpPost("Add_Product")]
-        public async Task<IActionResult> Add([FromBody] ProductDto product)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Add([FromForm] ProductDto product)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var data = await _productsService.CreateProductAsync(product);
-            
+            if (data == null)
+                return Conflict("A product with the same name already exists.");
             return CreatedAtAction(nameof(Add), data);
 
         }
 
-        [Authorize(Policy = "AdminOnly")]
-        [HttpPost("add_variant")]
-        public async Task<IActionResult> VariantUpdate(int id, [FromBody] ProductVariantDto productVariant)
-        {
-            var data = await _productsService.CreateProductVariant(id, productVariant);
-            return data == null ? NotFound() : Ok(data);
-        }
+
 
         [Authorize(Policy = "AdminOnly")]
-        [HttpPost("update_product")]
-        public async Task<IActionResult> Update( int id,[FromBody] ProductDto product)
+        [HttpPut("update_product")]
+        public async Task<IActionResult> Update( int id,[FromForm] ProductDto product)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var data = await _productsService.UpdateProductAsync(id, product);
             return data == null ? NotFound("No data found on corresponding Productid"):Ok(data);
         }
+
+
+
 
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("Soft_Delete")]
@@ -77,9 +90,50 @@ namespace VagueVault.Backend.Controllers
         {
             var data = await _productsService.DeleteProductAsync(id);
             return data ? NoContent() : NotFound("No data found on corresponding Productid");
-
         }
-       
+
+
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost("Add_Category")]
+
+        public async Task<IActionResult> CreateCategory(int id, string name)
+        {
+          var data = await  _productsService.AddCategory(id, name);
+            return Ok(data);
+        }
+
+
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPost("Add_Status")]
+
+        public async Task<IActionResult> CreateStatus(int id, string name)
+        {
+            var data = await _productsService.AddStatus(id, name);
+            return Ok(data);
+        }
+
+
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpDelete("Delete_category")]
+
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var data = await _productsService.DeleteCategory(id);
+            return data ? NoContent() : NotFound();
+        }
+
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpDelete("Delete_Status")]
+
+        public async Task<IActionResult> DeleteStatus(int id)
+        {
+            var data = await _productsService.DeleteStatus(id);
+            return data ? NoContent() : NotFound();
+        }
 
 
     }

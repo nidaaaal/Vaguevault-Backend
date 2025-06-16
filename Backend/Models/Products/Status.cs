@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using VagueVault.Backend.Models.Auth;
 
 namespace VagueVault.Backend.Models.Products
 {
@@ -11,6 +12,7 @@ namespace VagueVault.Backend.Models.Products
         public string Name { get; set; }
 
         public ICollection<Products> Products { get; set; }
+        public ICollection<Users> Users { get; set; }
 
     }
 }

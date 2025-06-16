@@ -52,13 +52,18 @@ namespace VagueVault
                             policy.RequireRole("Admin"));
             });
 
+
+
             builder.Services.AddSwaggerWithJwt();
 
-            builder.Services.ConfigureDbContext(builder.Configuration);
             builder.Services.ConfigureMapper();
             builder.Services.ConfigureRepository();
             builder.Services.ConfigureHelpers(builder.Configuration);
+            builder.Services.AddCloudinary(builder.Configuration);
             builder.Services.ConfigureServices();
+            builder.Services.ConfigureDbContext(builder.Configuration);
+
+
 
 
             var app = builder.Build();

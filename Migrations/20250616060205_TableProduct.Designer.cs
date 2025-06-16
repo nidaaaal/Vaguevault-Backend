@@ -12,8 +12,8 @@ using VagueVault.Backend.Data;
 namespace VagueVault.Migrations
 {
     [DbContext(typeof(VagueVaultDbContext))]
-    [Migration("20250613122713_ProductTable")]
-    partial class ProductTable
+    [Migration("20250616060205_TableProduct")]
+    partial class TableProduct
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,6 +41,9 @@ namespace VagueVault.Migrations
                     b.Property<DateTime?>("LastLogin")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("PasswordChangedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -56,6 +59,9 @@ namespace VagueVault.Migrations
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UsernameChangedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("createdAt")
                         .HasColumnType("datetime2");
@@ -81,60 +87,28 @@ namespace VagueVault.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Colors", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Colors");
-                });
-
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.ProductVariants", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ColorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SizeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ColorId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("SizeId", "ColorId");
-
-                    b.ToTable("ProductVariants");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Women"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Men"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Kids"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Unisex"
+                        });
                 });
 
             modelBuilder.Entity("VagueVault.Backend.Models.Products.Products", b =>
@@ -148,6 +122,10 @@ namespace VagueVault.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -155,6 +133,10 @@ namespace VagueVault.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -167,6 +149,12 @@ namespace VagueVault.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -176,24 +164,6 @@ namespace VagueVault.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Sizes", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("VagueVault.Backend.Models.Products.Status", b =>
@@ -212,32 +182,28 @@ namespace VagueVault.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Status");
-                });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.ProductVariants", b =>
-                {
-                    b.HasOne("VagueVault.Backend.Models.Products.Colors", "Colors")
-                        .WithMany("Variants")
-                        .HasForeignKey("ColorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("VagueVault.Backend.Models.Products.Products", "Products")
-                        .WithMany("Variants")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VagueVault.Backend.Models.Products.Sizes", "Sizes")
-                        .WithMany("Variants")
-                        .HasForeignKey("SizeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Colors");
-
-                    b.Navigation("Products");
-
-                    b.Navigation("Sizes");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Active"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Inactive"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Discontinued"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "OutOfStock"
+                        });
                 });
 
             modelBuilder.Entity("VagueVault.Backend.Models.Products.Products", b =>
@@ -262,21 +228,6 @@ namespace VagueVault.Migrations
             modelBuilder.Entity("VagueVault.Backend.Models.Products.Categories", b =>
                 {
                     b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Colors", b =>
-                {
-                    b.Navigation("Variants");
-                });
-
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Products", b =>
-                {
-                    b.Navigation("Variants");
-                });
-
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Sizes", b =>
-                {
-                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("VagueVault.Backend.Models.Products.Status", b =>

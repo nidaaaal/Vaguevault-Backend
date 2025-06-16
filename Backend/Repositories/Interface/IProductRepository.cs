@@ -5,10 +5,8 @@ namespace VagueVault.Backend.Repositories.Interface
 {
     public interface IProductRepository
     {
-        Task<Products> GetByCategoryId(int id);
-        Task<Products> GetByCategoryName(string categoryName);
+        Task<IEnumerable<Products>> GetByCategoryId(int id);
         Task<Products?> GetByProductId(int id);
-        Task<ProductVariants?> GetVariantByProduct(int productId);
 
     }
 }

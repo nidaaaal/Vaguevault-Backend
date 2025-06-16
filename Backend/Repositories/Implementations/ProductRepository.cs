@@ -17,35 +17,21 @@ namespace VagueVault.Backend.Repositories.Implementations
             _mapper = mapper;
         }
 
-        public async Task<Products> GetByCategoryId(int id)
+        public async Task<IEnumerable<Products>> GetByCategoryId(int id)
         {
           var result = await _dbContext.Products.Where(p=>p.CategoryId == id).ToListAsync();
             if (result == null) return null;
 
-            return _mapper.Map<Products>(result);
+            return result;
         }
-        public async Task<Products?> GetByCategoryName(string categoryName)
-        {
-            var result = await _dbContext.Products.Where(p => p.Categories.Name == categoryName).ToListAsync();
-            if (result == null) return null;
 
-            return _mapper.Map<Products>(result);
-        }
         public async Task<Products?> GetByProductId(int id)
         {
-            var data = await _dbContext.Products.Include(v => v.Variants).FirstOrDefaultAsync(x => x.Id == id);
+            var data = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (data == null) return null;
             return _mapper.Map<Products>(data);
 
         }
-        public async Task<ProductVariants?> GetVariantByProduct(int productId)
-        {
-            var result = await _dbContext.ProductVariants.Where(p => p.Id == productId).ToListAsync();
-            if (result == null) return null;
-
-            return _mapper.Map<ProductVariants>(result);
-        }
-
 
 
     }

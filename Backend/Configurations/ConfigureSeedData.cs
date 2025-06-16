@@ -12,7 +12,8 @@ namespace VagueVault.Backend.Configurations
             new Status { Id = 1, Name = "Active" },
             new Status { Id = 2, Name = "Inactive" },
             new Status { Id = 3, Name = "Discontinued" },
-            new Status { Id = 4, Name = "OutOfStock" }
+            new Status { Id = 4, Name = "OutOfStock" },
+            new Status { Id = 5, Name = "Suspended"}
             );
 
             modelBuilder.Entity<Categories>().HasData(
@@ -21,25 +22,6 @@ namespace VagueVault.Backend.Configurations
             new Categories { Id = 3, Name = "Kids" },
             new Categories { Id = 4, Name = "Unisex" }
             );
-
-            modelBuilder.Entity<Sizes>().HasData(
-            new Sizes { Id = 1, Name = "XS" },
-            new Sizes { Id = 2, Name = "S" },
-            new Sizes { Id = 3, Name = "M" },
-            new Sizes { Id = 4, Name = "L" },
-            new Sizes { Id = 5, Name = "XL" },
-            new Sizes { Id = 6, Name = "XXL" },
-            new Sizes { Id = 7, Name = "One Size" }
-            );
-
-            modelBuilder.Entity<Colors>().HasData(
-           new Colors { Id = 1, Name = "Cream" },
-           new Colors { Id = 2, Name = "Black" },
-           new Colors { Id = 3, Name = "White" },
-           new Colors { Id = 4, Name = "Navy" },
-           new Colors { Id = 5, Name = "Red" },
-           new Colors { Id = 6, Name = "Green" }
-       );
 
         }
     }

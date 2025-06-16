@@ -1,4 +1,5 @@
 ﻿using VagueVault.Backend.DTOs.Products;
+using VagueVault.Backend.Models.Products;
 
 namespace VagueVault.Backend.Services.Product
 {
@@ -11,7 +12,15 @@ namespace VagueVault.Backend.Services.Product
         Task<bool> DeleteProductAsync(int id);
         Task<IEnumerable<ProductDto>?> GetProductBySearch(string search);
         Task<IEnumerable<ProductDto>?> GetProductByCategoriesId(int id);
-        Task<ProductVariantDto?> CreateProductVariant(int id,ProductVariantDto productVariant);
+        Task<Categories> AddCategory(int id, string name);
+        Task<Status> AddStatus(int id, string name);
+
+        Task<bool> DeleteCategory(int id);
+
+        Task<bool> DeleteStatus(int id);
+
+
+
 
     }
 }

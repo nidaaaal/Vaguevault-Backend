@@ -13,10 +13,7 @@ namespace VagueVault.Backend.Data
         public DbSet<Users> Users { get; set; }
 
         public DbSet<Products> Products { get; set; }   
-        public DbSet<ProductVariants> ProductVariants { get; set; }
         public DbSet<Categories> Categories { get; set; }
-        public DbSet<Colors> Colors { get; set; }   
-        public DbSet<Sizes> Sizes { get; set; } 
         public DbSet<Status> Status { get; set; }
 
 
@@ -24,7 +21,7 @@ namespace VagueVault.Backend.Data
         {
 
             modelBuilder.ApplyConfiguration(new ConfigureProductRelation());
-            modelBuilder.ApplyConfiguration(new ConfigureProductVariant());
+            modelBuilder.ApplyConfiguration(new ConfigureUsersRelation());
             ConfigureSeedData.Seed(modelBuilder);
 
             

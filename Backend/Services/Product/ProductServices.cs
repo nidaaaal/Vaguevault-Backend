@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using VagueVault.Backend.Data;
 using VagueVault.Backend.DTOs.Products;
@@ -13,12 +12,14 @@ namespace VagueVault.Backend.Services.Product
         private readonly VagueVaultDbContext _dbContext;
         private readonly IProductRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public ProductServices(VagueVaultDbContext dbContext,IMapper mapper,IProductRepository repository) 
+        public ProductServices(VagueVaultDbContext dbContext,IMapper mapper,IProductRepository repository,ICloudinaryService cloudinaryService) 
         { 
             _dbContext = dbContext;
             _repository = repository;
             _mapper = mapper;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<IEnumerable<ProductDto>> GetProductsAsync()
@@ -33,28 +34,43 @@ namespace VagueVault.Backend.Services.Product
             var data = await _repository.GetByProductId(id);
              return _mapper.Map<ProductDto>(data);  
         }
-        public async Task<ProductDto?> CreateProductAsync(ProductDto product)
-        {
-            if (await _dbContext.Products.AnyAsync(x => x.Name == product.Name || x.Id==product.Id)) return null;
-          var data = _mapper.Map<Products>(product);
-            _dbContext.Products.Add(data);
+       
+           public async Task<ProductDto?> CreateProductAsync(ProductDto productDto){
+            if (await _dbContext.Products.AnyAsync(x => x.Name == productDto.Name))
+                return null;
+            productDto.Id = 0;
+
+            var product = _mapper.Map<Products>(productDto);
+            
+            Console.WriteLine(product);
+            var url = await _cloudinaryService.UploadImage(productDto.ImageFile, $"products/{productDto.Id}");
+            Console.WriteLine(url);
+
+            product.ImageUrl = url;
+
+            await _dbContext.Products.AddAsync(product);
+            
             await _dbContext.SaveChangesAsync();
-            return _mapper.Map<ProductDto>(data); 
 
-
+            return _mapper.Map<ProductDto>(product);
         }
-        public async Task<ProductDto?> UpdateProductAsync(int id, ProductDto product)
-        {
-            var data =await _dbContext.Products.Include(v=>v.Variants).FirstOrDefaultAsync(x => x.Id == id);
-            if (data == null) return null;
 
-            data.Id = product.Id;
-            data.Name=product.Name;
-            data.Price=product.Price;
-            data.Description=product.Description;
-            data.CategoryId = product.CategoryId;
-            data.StatusId=product.StatusId;
+        
+
+        public async Task<ProductDto?> UpdateProductAsync(int id, ProductDto productDto)
+        {
+            var data = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (data == null) return null;
+            await _cloudinaryService.DeleteImageAsync(data.ImageUrl);
+            var url = await _cloudinaryService.UploadImage(productDto.ImageFile, $"products/{id}");
+
+            data.Name= productDto.Name;
+            data.Price= productDto.Price;
+            data.Description= productDto.Description;
+            data.CategoryId = productDto.CategoryId;
+            data.StatusId= productDto.StatusId;
             data.UpdatedAt=DateTime.Now;
+            data.ImageUrl = url;
 
             await _dbContext.SaveChangesAsync();
 
@@ -85,21 +101,47 @@ namespace VagueVault.Backend.Services.Product
             return _mapper.Map<IEnumerable<ProductDto>>(data);
             
         }
-
-        public async Task<ProductVariantDto?> CreateProductVariant(int id, ProductVariantDto productVariant)
+        public async Task<Categories> AddCategory(int id,string name)
         {
-            var data = await _repository.GetByProductId(id);
-            if (data== null) return null;
-            var product =  _mapper.Map<ProductVariants>(productVariant);
-            data.Variants.Add(product);
+            var cat = new Categories
+            {
+                Id = id,
+                Name = name
+            };
+
+            _dbContext.Categories.Add(cat);
             await _dbContext.SaveChangesAsync();
-            return productVariant;
+            return cat;
+        }
+        public async Task<Status> AddStatus(int id, string name)
+        {
+            var stat = new Status
+            {
+                Id = id,
+                Name = name
+            };
+
+            _dbContext.Status.Add(stat);
+            await _dbContext.SaveChangesAsync();
+            return stat;
         }
 
+        public async Task<bool> DeleteCategory(int id)
+        {
+            var data = await _dbContext.Categories.FirstOrDefaultAsync(s => s.Id == id);
+            if (data == null) return false;
+            _dbContext.Categories.Remove(data);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
 
-
-
-
-
-    }
+        public async Task<bool> DeleteStatus(int id)
+         {
+            var data = await _dbContext.Status.FirstOrDefaultAsync(s => s.Id == id);
+            if (data == null) return false;
+            _dbContext.Status.Remove(data);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+}
 }

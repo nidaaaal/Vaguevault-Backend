@@ -9,9 +9,6 @@ namespace VagueVault.Backend.Configurations
     {
         public void Configure(EntityTypeBuilder<Products> entity)
         {
-                entity.HasMany(p => p.Variants).WithOne(p => p.Products)
-                .HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Cascade);
-
                 entity.HasOne(p => p.Status).WithMany(p => p.Products)
                 .HasForeignKey(p => p.StatusId).OnDelete(DeleteBehavior.Restrict);
 

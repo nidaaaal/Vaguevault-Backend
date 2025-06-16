@@ -3,7 +3,7 @@ using Vauguevault.Backend.DTOs.Auth;
 
 namespace VagueVault.Backend.Services.Auth
 {
-    public interface IUserServices
+    public interface IAuthenticationServices
     {
         Task<Users>RegisterUsers(RegisterDto registerDto);
         Task<string>LoginUsers(LoginDto loginDto);

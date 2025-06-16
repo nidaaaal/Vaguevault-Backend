@@ -16,7 +16,7 @@ namespace VagueVault.Backend.Repositories.Implementations
         public async Task<Users> CreateUserAsync(Users users)
         {
             _dbContext.Users.Add(users);
-            await _dbContext.SaveChangesAsync();    
+            await _dbContext.SaveChangesAsync();  
             return users;
         }
         public async Task<Users?> GetUserByUsernameAsync(string username)

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using VagueVault.Backend.DTOs.Products;
+using VagueVault.Backend.DTOs.Users;
 using VagueVault.Backend.Models.Auth;
 using VagueVault.Backend.Models.Products;
 using Vauguevault.Backend.DTOs.Auth;
@@ -13,7 +14,7 @@ namespace VagueVault.Backend.Data
             CreateMap<RegisterDto,Users>().ReverseMap();
             CreateMap<LoginDto,Users>().ReverseMap();
             CreateMap<ProductDto,Products>().ReverseMap();
-            CreateMap<ProductVariantDto,ProductVariants>().ReverseMap();    
+            CreateMap<UserDto, Users>().ReverseMap();
         }
     }
 }
