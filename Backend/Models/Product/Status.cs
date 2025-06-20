@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using VagueVault.Backend.Models.Auth;
 
-namespace VagueVault.Backend.Models.Products
+namespace VagueVault.Backend.Models.Product
 {
     public class Status
     {

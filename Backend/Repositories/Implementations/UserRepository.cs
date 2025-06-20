@@ -27,5 +27,10 @@ namespace VagueVault.Backend.Repositories.Implementations
         {
             return await _dbContext.Users.FirstOrDefaultAsync(x=>x.Email==email); 
         }
+        public async Task<Users?> GetUserByGuidAsync(Guid id)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
     }
 }

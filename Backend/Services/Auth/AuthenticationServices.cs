@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using System.Security;
 using VagueVault.Backend.Data;
+using VagueVault.Backend.DTOs.Auth;
 using VagueVault.Backend.Helpers.Auth.Interface;
+using VagueVault.Backend.Middleware;
 using VagueVault.Backend.Models.Auth;
 using VagueVault.Backend.Repositories.Interface;
 using Vauguevault.Backend.DTOs.Auth;
@@ -33,14 +35,14 @@ namespace VagueVault.Backend.Services.Auth
         public async Task<Users> RegisterUsers(RegisterDto registerDto)
         {
             if (await _userRepository.GetUserByUsernameAsync(registerDto.Username) != null)
-                throw new InvalidOperationException("Username Already Exist");
+                throw new BadRequestException("Username Already Exist");
             if (await _userRepository.GetUserByEmailAsync(registerDto.Email) != null)
-                throw new InvalidOperationException("Email Already Exist");
+                throw new BadRequestException("Email Already Exist");
 
             var (validation, errorMessage) = _passwordValidator.ValidatePassword(registerDto.Password);
             if (!validation)
             {
-                throw new SecurityException($"Password Validation Failed :{errorMessage}");
+                throw new ForbiddenException($"Password Validation Failed :{errorMessage}");
             }
             
            
@@ -54,32 +56,49 @@ namespace VagueVault.Backend.Services.Auth
 
 
         }
-        public async Task<string> LoginUsers(LoginDto loginDto)
+        public async Task<AuthResponseDto> LoginUsers(LoginDto loginDto)
         {
-            var user = await _userRepository.GetUserByEmailAsync(loginDto.email) ;
-            if(user==null || ! _passwordHasher.VerifyPassword(loginDto.password, user.PasswordHash))
+            var user = await _userRepository.GetUserByEmailAsync(loginDto.email);
+
+            if (user == null)
             {
-                if (user != null)
-                {
-                    user.FailedLoginAttempts++;
-                    await _context.SaveChangesAsync();
-
-                    if (user.FailedLoginAttempts > 5)
-                    {
-                        user.StatusId=6;
-
-                        throw new Exception("Account suspended. Please contact support");
-
-                    }
-                    throw new Exception($"After {5-user.FailedLoginAttempts} try your Account will be suspender!");
-                }
-                throw new Exception("Invalid username or password");
+                throw new UnauthorizedException("Invalid credentials.");
             }
+
+            if (user.StatusId == 6)
+            {
+                throw new UnauthorizedException("Account suspended. Please contact support.");
+            }
+
+            if (!_passwordHasher.VerifyPassword(loginDto.password, user.PasswordHash))
+            {
+                user.FailedLoginAttempts++;
+
+                if (user.FailedLoginAttempts > 6)
+                {
+                    user.StatusId = 6;
+                    await _context.SaveChangesAsync();
+                    throw new UnauthorizedException("Account suspended due to multiple failed login attempts.");
+                }
+
+                await _context.SaveChangesAsync();
+                throw new UnauthorizedException("Invalid credentials.");
+            }
+
             user.FailedLoginAttempts = 0;
             user.LastLogin = DateTime.UtcNow;
             await _context.SaveChangesAsync();
 
-            return _jwtHelper.GetJwtToken(user);  
+            string token = _jwtHelper.GetJwtToken(user);
+
+            return new AuthResponseDto
+            {
+                Token = token,
+                UserId = user.Id,
+                StatusId = user.StatusId,
+                Username = user.Username,
+            };
         }
+
     }
 }

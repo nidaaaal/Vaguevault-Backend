@@ -7,6 +7,8 @@ namespace VagueVault.Backend.Repositories.Interface
         Task<Users> CreateUserAsync(Users users);
         Task<Users?> GetUserByUsernameAsync(string username);
         Task<Users?> GetUserByEmailAsync(string email);
+        Task<Users?> GetUserByGuidAsync(Guid id);
+
 
 
     }

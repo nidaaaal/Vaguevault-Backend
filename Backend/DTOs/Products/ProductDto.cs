@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Product;
 
 namespace VagueVault.Backend.DTOs.Products
 {

@@ -1,7 +1,7 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using VagueVault.Backend.Middleware;
 
 namespace VagueVault.Backend.Middleware
 {
@@ -23,20 +23,69 @@ namespace VagueVault.Backend.Middleware
         {
             try
             {
-               await _next(httpContext);
+                await _next(httpContext);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
-                httpContext.Response.ContentType = "application/json";
-                httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                var response = new {
-                    StatusCodes = httpContext.Response.StatusCode,
-                    Message = _environment.IsDevelopment() ? ex.Message : "Internal server error",
-                    Details = _environment.IsDevelopment() ? ex.StackTrace : null
-                };
-                await httpContext.Response.WriteAsJsonAsync(response);
+                await HandleExceptionAsync(httpContext, ex);
             }
+        }
+        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        {
+            _logger.LogError(exception, "An unhandled exception occurred: {Message}", exception.Message);
+
+            context.Response.ContentType = "application/json";
+
+            var response = new
+            {
+                StatusCode = GetStatusCode(exception),
+                Message = GetUserFriendlyMessage(exception),
+                Details = _environment.IsDevelopment() ? GetDetailedError(exception) : null,
+                CorrelationId = context.TraceIdentifier,
+                Timestamp = DateTime.UtcNow
+            };
+
+            context.Response.StatusCode = response.StatusCode;
+            await context.Response.WriteAsJsonAsync(response);
+        }
+
+        private int GetStatusCode(Exception exception)
+        {
+            return exception switch
+            {
+                NotFoundException => StatusCodes.Status404NotFound,
+                BadRequestException => StatusCodes.Status400BadRequest,
+                UnauthorizedException => StatusCodes.Status401Unauthorized,
+                ForbiddenException => StatusCodes.Status403Forbidden,
+                ApiException apiEx => apiEx.StatusCode,
+                _ => StatusCodes.Status500InternalServerError
+            };
+        }
+
+        private string GetUserFriendlyMessage(Exception exception)
+        {
+            if (!_environment.IsDevelopment())
+            {
+                return exception switch
+                {
+                    ApiException apiEx => apiEx.Message,
+                    _ => "An unexpected error occurred."
+                };
+            }
+
+            return exception.Message;
+        }
+
+        private object GetDetailedError(Exception exception)
+        {
+            return new
+            {
+                exception.Message,
+                exception.Source,
+                InnerException = exception.InnerException?.Message,
+                Type = exception.GetType().Name,
+                Data = exception.Data.Count > 0 ? exception.Data : null
+            };
         }
     }
 

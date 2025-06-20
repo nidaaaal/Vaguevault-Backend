@@ -5,7 +5,7 @@ namespace VagueVault.Backend.Services.User
 {
     public interface IUserServices
     {
-        Task<ICollection<UserDto>> GetAllAsync();
+        Task<ICollection<Users>> GetAllAsync();
         Task<UserDto?> GetByUsernameAsync(string username);
         Task<string> ChangeStatusAsync(string username, int statusId);
         Task<string> ChangePasswordAsync(string email, string currentPassword, string newPassword);

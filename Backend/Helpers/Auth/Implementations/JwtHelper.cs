@@ -26,9 +26,7 @@ namespace VagueVault.Backend.Helpers.Auth.Implementations
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
             new(ClaimTypes.Email, user.Email),
-            new(ClaimTypes.Role, user.Role),
-            new("status", user.StatusId.ToString())
-        };
+            new(ClaimTypes.Role, user.Role)        };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

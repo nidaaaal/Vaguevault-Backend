@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Product;
+using VagueVault.Backend.Models.Wishlists;
 
 
-namespace VagueVault.Backend.Models.Products
+namespace VagueVault.Backend.Models.Product
 {
     public class Products
     {
@@ -37,6 +38,8 @@ namespace VagueVault.Backend.Models.Products
         public int StatusId { get; set; } = 1;
         public Status Status { get; set; } = null!;
 
+        public bool IsDeleted { get; set; } = false;
+
         [Required]
         [MaxLength(255)] // Important for Cloudinary URLs
         public string ImageUrl { get; set; } = ""; // Initialize
@@ -46,5 +49,7 @@ namespace VagueVault.Backend.Models.Products
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow; // Initialize
+
+        public ICollection<Wishlist> wishlists { get; set; }   
     }
 }

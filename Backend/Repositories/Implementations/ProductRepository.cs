@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using VagueVault.Backend.Data;
 using VagueVault.Backend.DTOs.Products;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Product;
 using VagueVault.Backend.Repositories.Interface;
 
 namespace VagueVault.Backend.Repositories.Implementations
@@ -17,7 +17,7 @@ namespace VagueVault.Backend.Repositories.Implementations
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<Products>> GetByCategoryId(int id)
+        public async Task<IEnumerable<Products>?> GetByCategoryId(int id)
         {
           var result = await _dbContext.Products.Where(p=>p.CategoryId == id).ToListAsync();
             if (result == null) return null;
@@ -29,7 +29,7 @@ namespace VagueVault.Backend.Repositories.Implementations
         {
             var data = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (data == null) return null;
-            return _mapper.Map<Products>(data);
+            return data;
 
         }
 

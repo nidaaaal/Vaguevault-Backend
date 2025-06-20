@@ -77,7 +77,8 @@ namespace VagueVault
 
             app.UseHttpsRedirection();
 
-            app.UseMiddleware<ExceptionMiddleware>();   
+         
+
 
             app.UseAuthentication();
 

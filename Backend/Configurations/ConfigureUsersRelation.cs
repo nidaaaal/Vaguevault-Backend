@@ -12,7 +12,6 @@ namespace VagueVault.Backend.Configurations
                 .HasForeignKey(e => e.StatusId).OnDelete(DeleteBehavior.Restrict);
 
 
-
             entity.HasIndex(p => p.StatusId);
 
         }

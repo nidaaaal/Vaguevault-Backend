@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Wishlists;
+
+using VagueVault.Backend.Models.Product;
+using VagueVault.Backend.Models.Carts;
+using VagueVault.Backend.Models.Addresses;
 
 namespace VagueVault.Backend.Models.Auth
 {
@@ -31,6 +35,11 @@ namespace VagueVault.Backend.Models.Auth
 
         public int StatusId { get; set; } = 1;
         public Status Status { get; set; } = null!;
+
+        public ICollection<Wishlist> wishlists { get; set; }
+        public ICollection<Address> Address { get; set; }
+
+        public Cart Cart { get; set; }
 
         public static class Roles
         {

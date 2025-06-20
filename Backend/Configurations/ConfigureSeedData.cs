@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Drawing;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Product;
 
 namespace VagueVault.Backend.Configurations
 {

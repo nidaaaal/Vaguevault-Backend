@@ -1,4 +1,5 @@
-﻿using VagueVault.Backend.Models.Auth;
+﻿using VagueVault.Backend.DTOs.Auth;
+using VagueVault.Backend.Models.Auth;
 using Vauguevault.Backend.DTOs.Auth;
 
 namespace VagueVault.Backend.Services.Auth
@@ -6,6 +7,6 @@ namespace VagueVault.Backend.Services.Auth
     public interface IAuthenticationServices
     {
         Task<Users>RegisterUsers(RegisterDto registerDto);
-        Task<string>LoginUsers(LoginDto loginDto);
+        Task<AuthResponseDto> LoginUsers(LoginDto loginDto);
     }
 }

@@ -23,17 +23,16 @@ namespace VagueVault.Backend.Controllers
         [HttpGet("All-Products")]
         public async Task<ActionResult<IEnumerable<ProductDto>>> Get()
         {
-            var data = await _productsService.GetProductsAsync();
-            return Ok(data);
+            var Products = await _productsService.GetProductsAsync();
+            return Ok(new { Products });
         }
 
 
         [HttpGet("By_Id")]
         public async Task<IActionResult> GetById(int id)
         {
-           var data = await _productsService.GetByIdAsync(id);
-            if (data == null) return NotFound("No Product found!");
-            return Ok(data);
+           var product = await _productsService.GetByIdAsync(id);
+            return Ok(new { product });
         }
 
 
@@ -41,8 +40,8 @@ namespace VagueVault.Backend.Controllers
         [HttpGet("Search")]
         public async Task<IActionResult> Search([FromQuery] string search)
         {
-            var data = await _productsService.GetProductBySearch(search);
-            return data == null ? NotFound():Ok(data);
+            var Response = await _productsService.GetProductBySearch(search);
+            return Ok(new { Response });
         }
 
 
@@ -50,8 +49,8 @@ namespace VagueVault.Backend.Controllers
         [HttpGet("By_Category")]
         public async Task<IActionResult> GetByCategory(int id)
         {
-            var data = await _productsService.GetProductByCategoriesId(id);
-            return data == null ? NotFound(data) : Ok(data);
+            var Category = await _productsService.GetProductByCategoriesId(id);
+            return Ok(new { Category });
         }
 
 
@@ -64,12 +63,9 @@ namespace VagueVault.Backend.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var data = await _productsService.CreateProductAsync(product);
-            if (data == null)
-                return Conflict("A product with the same name already exists.");
             return CreatedAtAction(nameof(Add), data);
 
         }
-
 
 
         [Authorize(Policy = "AdminOnly")]
@@ -77,8 +73,8 @@ namespace VagueVault.Backend.Controllers
         public async Task<IActionResult> Update( int id,[FromForm] ProductDto product)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            var data = await _productsService.UpdateProductAsync(id, product);
-            return data == null ? NotFound("No data found on corresponding Productid"):Ok(data);
+            var Response = await _productsService.UpdateProductAsync(id, product);
+            return Ok(new { Response });
         }
 
 
@@ -88,8 +84,8 @@ namespace VagueVault.Backend.Controllers
         [HttpDelete("Soft_Delete")]
         public async Task<IActionResult> Delete(int id)
         {
-            var data = await _productsService.DeleteProductAsync(id);
-            return data ? NoContent() : NotFound("No data found on corresponding Productid");
+            var DeletedStatus = await _productsService.DeleteProductAsync(id);
+            return Ok(new { DeletedStatus });
         }
 
 
@@ -99,8 +95,8 @@ namespace VagueVault.Backend.Controllers
 
         public async Task<IActionResult> CreateCategory(int id, string name)
         {
-          var data = await  _productsService.AddCategory(id, name);
-            return Ok(data);
+          var Category = await  _productsService.AddCategory(id, name);
+            return Ok(new {Category});
         }
 
 
@@ -110,8 +106,8 @@ namespace VagueVault.Backend.Controllers
 
         public async Task<IActionResult> CreateStatus(int id, string name)
         {
-            var data = await _productsService.AddStatus(id, name);
-            return Ok(data);
+            var Status = await _productsService.AddStatus(id, name);
+            return Ok(new {Status});
         }
 
 
@@ -121,8 +117,8 @@ namespace VagueVault.Backend.Controllers
 
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            var data = await _productsService.DeleteCategory(id);
-            return data ? NoContent() : NotFound();
+            var DeletedStatus = await _productsService.DeleteCategory(id);
+            return Ok(new { DeletedStatus });
         }
 
 
@@ -131,11 +127,9 @@ namespace VagueVault.Backend.Controllers
 
         public async Task<IActionResult> DeleteStatus(int id)
         {
-            var data = await _productsService.DeleteStatus(id);
-            return data ? NoContent() : NotFound();
+            var DeletedStatus = await _productsService.DeleteStatus(id);
+            return Ok(new { DeletedStatus });
         }
-
-
     }
 }
 

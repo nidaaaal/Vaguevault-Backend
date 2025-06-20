@@ -22,6 +22,48 @@ namespace VagueVault.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("VagueVault.Backend.Models.Addresses.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Address");
+                });
+
             modelBuilder.Entity("VagueVault.Backend.Models.Auth.Users", b =>
                 {
                     b.Property<Guid>("Id")
@@ -69,7 +111,61 @@ namespace VagueVault.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Categories", b =>
+            modelBuilder.Entity("VagueVault.Backend.Models.Carts.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Cart");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Carts.CartItems", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CartId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Product.Categories", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -109,7 +205,7 @@ namespace VagueVault.Migrations
                         });
                 });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Products", b =>
+            modelBuilder.Entity("VagueVault.Backend.Models.Product.Products", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,6 +233,9 @@ namespace VagueVault.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -166,7 +265,7 @@ namespace VagueVault.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Status", b =>
+            modelBuilder.Entity("VagueVault.Backend.Models.Product.Status", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -211,9 +310,47 @@ namespace VagueVault.Migrations
                         });
                 });
 
+            modelBuilder.Entity("VagueVault.Backend.Models.Wishlists.Wishlist", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("UserId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("Wishlist");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Addresses.Address", b =>
+                {
+                    b.HasOne("VagueVault.Backend.Models.Auth.Users", "Users")
+                        .WithMany("Address")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("VagueVault.Backend.Models.Auth.Users", b =>
                 {
-                    b.HasOne("VagueVault.Backend.Models.Products.Status", "Status")
+                    b.HasOne("VagueVault.Backend.Models.Product.Status", "Status")
                         .WithMany("Users")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -222,15 +359,45 @@ namespace VagueVault.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Products", b =>
+            modelBuilder.Entity("VagueVault.Backend.Models.Carts.Cart", b =>
                 {
-                    b.HasOne("VagueVault.Backend.Models.Products.Categories", "Categories")
+                    b.HasOne("VagueVault.Backend.Models.Auth.Users", "user")
+                        .WithOne("Cart")
+                        .HasForeignKey("VagueVault.Backend.Models.Carts.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("user");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Carts.CartItems", b =>
+                {
+                    b.HasOne("VagueVault.Backend.Models.Carts.Cart", "Carts")
+                        .WithMany("Items")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VagueVault.Backend.Models.Product.Products", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Carts");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Product.Products", b =>
+                {
+                    b.HasOne("VagueVault.Backend.Models.Product.Categories", "Categories")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("VagueVault.Backend.Models.Products.Status", "Status")
+                    b.HasOne("VagueVault.Backend.Models.Product.Status", "Status")
                         .WithMany("Products")
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -241,12 +408,51 @@ namespace VagueVault.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Categories", b =>
+            modelBuilder.Entity("VagueVault.Backend.Models.Wishlists.Wishlist", b =>
+                {
+                    b.HasOne("VagueVault.Backend.Models.Product.Products", "Products")
+                        .WithMany("wishlists")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VagueVault.Backend.Models.Auth.Users", "users")
+                        .WithMany("wishlists")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Products");
+
+                    b.Navigation("users");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Auth.Users", b =>
+                {
+                    b.Navigation("Address");
+
+                    b.Navigation("Cart")
+                        .IsRequired();
+
+                    b.Navigation("wishlists");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Carts.Cart", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Product.Categories", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("VagueVault.Backend.Models.Products.Status", b =>
+            modelBuilder.Entity("VagueVault.Backend.Models.Product.Products", b =>
+                {
+                    b.Navigation("wishlists");
+                });
+
+            modelBuilder.Entity("VagueVault.Backend.Models.Product.Status", b =>
                 {
                     b.Navigation("Products");
 

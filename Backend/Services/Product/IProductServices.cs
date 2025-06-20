@@ -1,5 +1,5 @@
 ﻿using VagueVault.Backend.DTOs.Products;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Product;
 
 namespace VagueVault.Backend.Services.Product
 {

@@ -5,8 +5,9 @@ using System.Security;
 using VagueVault.Backend.Data;
 using VagueVault.Backend.DTOs.Users;
 using VagueVault.Backend.Helpers.Auth.Interface;
+using VagueVault.Backend.Middleware;
 using VagueVault.Backend.Models.Auth;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Product;
 using VagueVault.Backend.Repositories.Interface;
 using Vauguevault.Backend.DTOs.Auth;
 
@@ -31,46 +32,43 @@ namespace VagueVault.Backend.Services.User
         }
 
 
-       public async Task<ICollection<UserDto>> GetAllAsync()
+       public async Task<ICollection<Users>> GetAllAsync()
         {
             var users = await _context.Users.ToListAsync();
-            var userDtos =_mapper.Map<List<UserDto>>(users);
-            return userDtos;
+            return users;
         }
         public async Task<UserDto?> GetByUsernameAsync(string username)
         {
            var data = await _userRepository.GetUserByUsernameAsync(username);
-           if(data == null) return null;
+            if (data == null) throw new NotFoundException("User Doesn't Exist");
             return _mapper.Map<UserDto>(data);
         }
         public async Task<string> ChangeStatusAsync(string username, int statusId)
         {
            var data = await _userRepository.GetUserByUsernameAsync(username);
-            if (data == null) return "No User found";
-            if ( !(await _context.Status.AnyAsync(x => x.Id == statusId))) return "Invalid StatusId";
+            if (data == null) throw new NotFoundException("User Doesn't Exist");
+            if ( !await _context.Status.AnyAsync(x => x.Id == statusId))
+                throw new BadRequestException("User Doesn't Exist");
             data.StatusId = statusId;
            await _context.SaveChangesAsync();
 
-            return $"User Status Changed";
-
-
+            return "User Status Changed";
         }
         public async Task<string> ChangePasswordAsync(string email, string currentPassword,string newPassword)
         {
            var user = await _userRepository.GetUserByEmailAsync(email);
-            if (user == null) throw new InvalidOperationException("USER DOESN'T EXIST");
+            if (user == null) throw new NotFoundException("USER DOESN'T EXIST");
 
 
-            if (user == null || !_hasher.VerifyPassword(currentPassword, user.PasswordHash))
-            {
-                throw new InvalidOperationException("Older password Does not match with current password");
-            }
+            if (!_hasher.VerifyPassword(currentPassword, user.PasswordHash))
+                throw new UnauthorizedException("Old password is incorrect");
+            
 
             if (user.PasswordChangedAt.HasValue &&
        user.PasswordChangedAt.Value.AddDays(30) > DateTime.UtcNow)
             {
                 var nextAllowedChangeDate = user.PasswordChangedAt.Value.AddDays(30);
-                throw new SecurityException($"You can only change your password once per month. Next allowed change: {nextAllowedChangeDate:yyyy-MM-dd}");
+                throw new ForbiddenException($"You can only change your password once per month. Next allowed change: {nextAllowedChangeDate:yyyy-MM-dd}");
             }
 
 
@@ -78,13 +76,14 @@ namespace VagueVault.Backend.Services.User
 
             if (!valid)
             {
-                throw new InvalidOperationException($"New Password Validation failed : {errorMessage}");
+                throw new BadRequestException($"New Password Validation failed : {errorMessage}");
             }
+
+            if (_hasher.VerifyPassword(newPassword,user.PasswordHash) )
+                throw new BadRequestException("New password cannot be the same as the old one!");
 
 
             user.PasswordHash = _hasher.HashPassword(newPassword);
-
-            if (user.PasswordHash == currentPassword) throw new InvalidOperationException("new password cannot be same as old password!");
 
             user.PasswordChangedAt = DateTime.Now;
             await _context.SaveChangesAsync();  
@@ -94,13 +93,13 @@ namespace VagueVault.Backend.Services.User
         public async Task<string> ChangeUsernameAsync(string username,string email, string newUsername)
         {
            var user = await _userRepository.GetUserByUsernameAsync(username);
-           if (user == null) throw new InvalidOperationException("USER DOESN'T EXIST");
+           if (user == null) throw new NotFoundException("USER DOESN'T EXIST");
 
             if (user.Email != email)
-                throw new InvalidOperationException("Email Not Matching");
+                throw new NotFoundException("Email Not Matching");
 
             if (await _userRepository.GetUserByUsernameAsync(newUsername) != null)
-                throw new InvalidOperationException("Username Already Exist");
+                throw new BadRequestException("Username Already Exist");
 
             user.Username = newUsername;
             await _context.SaveChangesAsync();

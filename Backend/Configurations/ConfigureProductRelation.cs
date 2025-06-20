@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Reflection.Emit;
-using VagueVault.Backend.Models.Products;
+using VagueVault.Backend.Models.Product;
 
 namespace VagueVault.Backend.Configurations
 {
@@ -16,6 +16,8 @@ namespace VagueVault.Backend.Configurations
                 .HasForeignKey(p => p.CategoryId).OnDelete(DeleteBehavior.Restrict);
 
                 entity.Property(p => p.Price).IsRequired().HasColumnType("decimal(18,2)");
+
+                
 
                 entity.HasIndex(p => p.Name);
                 entity.HasIndex(p => p.StatusId);

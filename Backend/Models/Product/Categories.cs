@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace VagueVault.Backend.Models.Products
+namespace VagueVault.Backend.Models.Product
 {
     public class Categories
     {
@@ -10,6 +10,6 @@ namespace VagueVault.Backend.Models.Products
         [MaxLength(50)]
         public string Name { get; set; }   
         
-        public ICollection<Products> Products { get; set; }
+        public ICollection<Products> Products { get; set; } 
     }
 }
