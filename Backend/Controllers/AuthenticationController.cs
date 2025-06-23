@@ -10,7 +10,7 @@ using Vauguevault.Backend.DTOs.Auth;
 
 namespace VagueVault.Backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/Authentication")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {

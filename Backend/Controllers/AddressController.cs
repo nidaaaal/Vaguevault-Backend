@@ -7,7 +7,7 @@ using VagueVault.Backend.Services.Addressess;
 namespace VagueVault.Backend.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/address")]
     [ApiController]
     public class AddressController : ControllerBase
     {
@@ -17,7 +17,7 @@ namespace VagueVault.Backend.Controllers
         {
             _addressServices = addressServices;
         }
-        [HttpGet("Get-Address")]
+        [HttpGet("View")]
         public async Task<IActionResult> Get(Guid id)
         {
             var Address = await _addressServices.GetAddress(id);
@@ -25,20 +25,20 @@ namespace VagueVault.Backend.Controllers
 
         }
 
-        [HttpPost("Add-Address")]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create(Guid id,[FromForm]AddAddressDto addressDto)
         {
-            var Address = await _addressServices.AddAddress(id, addressDto);
-            return Ok(new { Address });
+            var AddedAddress = await _addressServices.AddAddress(id, addressDto);
+            return Ok(new { AddedAddress });
 
         }
-        [HttpPut("Update-Address")]
+        [HttpPut("Update")]
         public async Task<IActionResult> Update(Guid id,[FromForm] AddressDto addressDto)
         {
-            var Address = await _addressServices.UpdateAddress(id, addressDto);
-            return Ok(new { Address });
+            var UpdatetdAddress = await _addressServices.UpdateAddress(id, addressDto);
+            return Ok(new { UpdatetdAddress });
         }
-        [HttpDelete("Delete-Address")]
+        [HttpDelete("Delete")]
         public async Task<IActionResult> Delete(Guid id,int addressId)
         {
             var Response = await _addressServices.RemoveAddress(id,addressId);

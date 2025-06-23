@@ -7,20 +7,12 @@ namespace VagueVault.Backend.Services.Product
     {
         Task<IEnumerable<ProductDto>> GetProductsAsync();
         Task<ProductDto?> GetByIdAsync(int id);
-        Task<ProductDto?> CreateProductAsync(ProductDto product);
-        Task<ProductDto?> UpdateProductAsync(int id, ProductDto product);
+        Task<ProductDto?> CreateProductAsync(ProductAddDto product);
+        Task<ProductDto?> UpdateProductAsync(int id, ProductAddDto product);
+        Task<ProductDto?> UpdateProductPriceAsync(int id, Decimal price);
         Task<bool> DeleteProductAsync(int id);
         Task<IEnumerable<ProductDto>?> GetProductBySearch(string search);
         Task<IEnumerable<ProductDto>?> GetProductByCategoriesId(int id);
-        Task<Categories> AddCategory(int id, string name);
-        Task<Status> AddStatus(int id, string name);
-
-        Task<bool> DeleteCategory(int id);
-
-        Task<bool> DeleteStatus(int id);
-
-
-
 
     }
 }

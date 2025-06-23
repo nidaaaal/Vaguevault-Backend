@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using VagueVault.Backend.Models.Product;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VagueVault.Backend.DTOs.Products
 {
-    public class ProductDto
+    public class ProductAddDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = ""; // Initialize with default
@@ -17,12 +15,12 @@ namespace VagueVault.Backend.DTOs.Products
 
         public int Stock { get; set; } = 10;
 
-        public string Category { get; set; } ="";
+        public int CategoryId { get; set; }
 
-        public string Status { get; set; } = "";
-
-        public string ImageUrl { get; set; } = ""; // Initialize
+        public int StatusId { get; set; } = 1;
 
 
+        [NotMapped]
+        public IFormFile? ImageFile { get; set; }
     }
 }

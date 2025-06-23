@@ -76,8 +76,11 @@ namespace VagueVault.Backend.Services.Cart
         {
             var cart = await _cartRepository.GetCart(id);
             if (cart == null) throw new UnauthorizedException("Cart not found. Please ensure you are logged in!");
+
             var existingProduct = cart.Items.FirstOrDefault(x => x.ProductId == productId);
+
             if (existingProduct == null) throw new BadRequestException("Invalid ProductId");
+
             _dbContext.CartItems.Remove(existingProduct);
             await _dbContext.SaveChangesAsync();
             return true;
@@ -87,7 +90,9 @@ namespace VagueVault.Backend.Services.Cart
         {
             var cart = await _cartRepository.GetCart(id);
             if (cart == null) throw new UnauthorizedException("Cart not found. Please ensure you are logged in!");
+
             var existingProduct = cart.Items.FirstOrDefault(x => x.ProductId == cartItem.ProductId);
+
             if (existingProduct == null) throw new BadRequestException("Invalid ProductId");
 
             if(existingProduct.Quantity > cartItem.Quantity) { existingProduct.Quantity -= cartItem.Quantity; }

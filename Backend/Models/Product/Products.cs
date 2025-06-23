@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using VagueVault.Backend.Models.Order;
 using VagueVault.Backend.Models.Product;
 using VagueVault.Backend.Models.Wishlists;
 
@@ -51,5 +52,6 @@ namespace VagueVault.Backend.Models.Product
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow; // Initialize
 
         public ICollection<Wishlist> wishlists { get; set; }   
+        public ICollection<OrderCollections> OrderCollections { get; set; }
     }
 }

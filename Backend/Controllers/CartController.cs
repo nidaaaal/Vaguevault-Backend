@@ -8,7 +8,7 @@ using VagueVault.Backend.Services.Cart;
 namespace VagueVault.Backend.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/cart")]
     [ApiController]
     public class CartController : ControllerBase
     {
@@ -18,13 +18,13 @@ namespace VagueVault.Backend.Controllers
         {
             _cartServices = cartServices;
         }
-        [HttpGet("View-Cart")]
+        [HttpGet("View")]
         public async Task<IActionResult> Get(Guid id)
         {
             var cart = await _cartServices.GetCartItems(id);
             return Ok(new { cart });
         }
-        [HttpPost("Add-To-Cart")]
+        [HttpPost("addToCart")]
         public async Task<IActionResult> AddToCart(Guid id,CartItemRequestDto request)
         {
            var response = await _cartServices.AddToCart(id,request);
@@ -33,7 +33,7 @@ namespace VagueVault.Backend.Controllers
 
             return Ok(new { Message = "Product Added to cart." });
         }
-        [HttpDelete("Remove-From-Cart")]
+        [HttpDelete("removeFromCart")]
         public async Task<IActionResult> RemoveFromCart(Guid id, int productId)
         {
             var response = await _cartServices.RemoveFromCart(id, productId);
@@ -42,7 +42,7 @@ namespace VagueVault.Backend.Controllers
 
             return Ok(new { Message = "Product quantity Remove from cart." });
         }
-        [HttpPatch("update-quantity")]
+        [HttpPatch("updateQuantity")]
         public async Task<IActionResult> DecreaseQuantity(Guid id,CartItemRequestDto requestDto)
         {
            var response  = await _cartServices.DeceaseQuantity(id, requestDto);
@@ -51,7 +51,7 @@ namespace VagueVault.Backend.Controllers
 
             return Ok(new { Message = "Product quantity decreased from cart." });
         }
-        [HttpDelete("Clear-Cart")]
+        [HttpDelete("clearCart")]
         public async Task<IActionResult> ClearCart(Guid id)
         {
             var response = await _cartServices.ClearCart(id);

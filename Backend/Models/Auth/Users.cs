@@ -5,6 +5,7 @@ using VagueVault.Backend.Models.Wishlists;
 using VagueVault.Backend.Models.Product;
 using VagueVault.Backend.Models.Carts;
 using VagueVault.Backend.Models.Addresses;
+using VagueVault.Backend.Models.Order;
 
 namespace VagueVault.Backend.Models.Auth
 {
@@ -38,6 +39,7 @@ namespace VagueVault.Backend.Models.Auth
 
         public ICollection<Wishlist> wishlists { get; set; }
         public ICollection<Address> Address { get; set; }
+        public ICollection<Orders> Orders { get; set; } 
 
         public Cart Cart { get; set; }
 

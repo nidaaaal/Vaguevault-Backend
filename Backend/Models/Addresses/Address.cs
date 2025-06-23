@@ -1,4 +1,5 @@
 ﻿using VagueVault.Backend.Models.Auth;
+using VagueVault.Backend.Models.Order;
 
 namespace VagueVault.Backend.Models.Addresses
 {
@@ -15,6 +16,8 @@ namespace VagueVault.Backend.Models.Addresses
         public string Street { get; set; } = "";
         public string City { get; set; } = "";
         public string PostalCode { get; set; } = "";
+
+        public ICollection<Orders> Orders { get; set; } 
 
     }
 }

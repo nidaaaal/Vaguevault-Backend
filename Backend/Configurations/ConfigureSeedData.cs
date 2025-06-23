@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Drawing;
+using VagueVault.Backend.Models.Order;
 using VagueVault.Backend.Models.Product;
 
 namespace VagueVault.Backend.Configurations
@@ -22,7 +23,12 @@ namespace VagueVault.Backend.Configurations
             new Categories { Id = 3, Name = "Kids" },
             new Categories { Id = 4, Name = "Unisex" }
             );
+            modelBuilder.Entity<PaymentMethods>().HasData(
+                new PaymentMethods { Id = 1, Name = "Credit Card", IsActive = true },
+                new PaymentMethods { Id = 2, Name = "PayPal", IsActive = true },
+                new PaymentMethods { Id = 3, Name = "Cash on Delivery", IsActive = true });
 
-        }
+
+                }
     }
 }

@@ -7,7 +7,10 @@ using VagueVault.Backend.Repositories.Interface;
 using VagueVault.Backend.Services.Addressess;
 using VagueVault.Backend.Services.Auth;
 using VagueVault.Backend.Services.Cart;
+using VagueVault.Backend.Services.Orderss;
+using VagueVault.Backend.Services.Payment;
 using VagueVault.Backend.Services.Product;
+using VagueVault.Backend.Services.Statuses;
 using VagueVault.Backend.Services.User;
 using VagueVault.Backend.Services.Wishlists;
 
@@ -25,6 +28,7 @@ namespace VagueVault.Backend.Configurations
             services.AddScoped<IUserRepository,UserRepository>();
             services.AddScoped<IProductRepository,ProductRepository>();
             services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<IPaymentRepository,PaymentRepository>();
         }
         public static void ConfigureServices(this IServiceCollection services)
         {
@@ -34,7 +38,10 @@ namespace VagueVault.Backend.Configurations
             services.AddScoped<IUserServices, UserServices>();  
             services.AddScoped<IWishlistServices, WishlistServices>();
             services.AddScoped<ICartServices, CartServices>();
-            services.AddScoped<IAddressServices, AddressServices>();    
+            services.AddScoped<IAddressServices, AddressServices>();
+            services.AddScoped<IOrderServices, OrderServices>();
+            services.AddScoped<ICategoryStatusServices, CategoryStatusServices>();
+            services.AddScoped<IPayPalService, PayPalService>();    
 
         }
 

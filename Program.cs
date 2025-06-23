@@ -60,6 +60,7 @@ namespace VagueVault
             builder.Services.ConfigureRepository();
             builder.Services.ConfigureHelpers(builder.Configuration);
             builder.Services.AddCloudinary(builder.Configuration);
+            builder.Services.AddPayPal(builder.Configuration);
             builder.Services.ConfigureServices();
             builder.Services.ConfigureDbContext(builder.Configuration);
 

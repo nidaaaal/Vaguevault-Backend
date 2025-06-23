@@ -6,7 +6,7 @@ using VagueVault.Backend.Services.User;
 namespace VagueVault.Backend.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/Users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -18,14 +18,14 @@ namespace VagueVault.Backend.Controllers
         }
 
         [Authorize(Policy ="AdminOnly")]
-        [HttpGet("Get_all")]
+        [HttpGet("View")]
         public async Task<IActionResult> GetAll()
         {
            var Users = await _userServices.GetAllAsync();
             return Ok(new { Users });
         }
 
-        [HttpGet("Get_By_Username")]
+        [HttpGet("View/{Username}")]
         public async Task<IActionResult> GetByUsername(string username)
         {
             var user = await _userServices.GetByUsernameAsync(username);
@@ -33,14 +33,14 @@ namespace VagueVault.Backend.Controllers
         }
 
         [Authorize(Policy = "AdminOnly")]
-        [HttpPut("Change_status")]
+        [HttpPut("changeStatus")]
         public async Task<IActionResult> ChangeStatus(string username,int statusid)
         {
             var Response = await _userServices.ChangeStatusAsync(username, statusid);
             return Ok(new { Response });
         }
         [Authorize(Roles ="User")]
-        [HttpPut("Change_password")]
+        [HttpPut("changePassword")]
         public async Task<IActionResult> ChangePassword (string email, string currentPassword, string newPassword)
         {
             var Response = await _userServices.ChangePasswordAsync(email, currentPassword, newPassword);
@@ -48,7 +48,7 @@ namespace VagueVault.Backend.Controllers
 
         }
         [Authorize(Roles = "User")]
-        [HttpPut("Change_username")]
+        [HttpPut("changeUsername")]
         public async Task<IActionResult> ChangeUsername(string username, string email, string newUsername)
         {
            var Response = await _userServices.ChangeUsernameAsync(username, email, newUsername);

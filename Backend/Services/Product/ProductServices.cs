@@ -26,7 +26,10 @@ namespace VagueVault.Backend.Services.Product
         public async Task<IEnumerable<ProductDto>> GetProductsAsync()
         {
           
-                var products = await _dbContext.Products.ToListAsync();
+                var products = await _dbContext.Products
+                .Include(x=>x.Status)
+                .Include(x=>x.Categories)
+                .ToListAsync();
                 return _mapper.Map<IEnumerable<ProductDto>>(products);
            
         }
@@ -37,7 +40,7 @@ namespace VagueVault.Backend.Services.Product
              return _mapper.Map<ProductDto>(data);  
         }
        
-           public async Task<ProductDto?> CreateProductAsync(ProductDto productDto){
+           public async Task<ProductDto?> CreateProductAsync(ProductAddDto productDto){
             if (await _dbContext.Products.AnyAsync(x => x.Name == productDto.Name))
                 throw new BadRequestException("Product Name Already Exist");
             productDto.Id = 0;
@@ -58,7 +61,7 @@ namespace VagueVault.Backend.Services.Product
 
         
 
-        public async Task<ProductDto?> UpdateProductAsync(int id, ProductDto productDto)
+        public async Task<ProductDto?> UpdateProductAsync(int id, ProductAddDto productDto)
         {
             var data = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
             if (data == null) throw new NotFoundException("Invalid Product Id");
@@ -77,6 +80,17 @@ namespace VagueVault.Backend.Services.Product
 
             return _mapper.Map<ProductDto>(data);  
         }
+
+        public async Task<ProductDto?> UpdateProductPriceAsync(int id, Decimal price)
+        {
+            var data = await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (data == null) throw new NotFoundException("Invalid Product Id");
+            data.Price = price;
+            await _dbContext.SaveChangesAsync();
+            return _mapper.Map<ProductDto>(data);
+
+        }
+
         public async Task<bool> DeleteProductAsync(int id)
         {
             var data = await _repository.GetByProductId(id);
@@ -87,13 +101,14 @@ namespace VagueVault.Backend.Services.Product
             await _dbContext.SaveChangesAsync();
             return true;
         }
-
+       
         public async Task<IEnumerable<ProductDto>?> GetProductBySearch(string search)
         {
            var result = await _dbContext.Products.Where(p => p.Name.ToLower().Contains(search.ToLower())).ToListAsync();
             if (result == null) throw new NotFoundException("No products!");
             return _mapper.Map<IEnumerable<ProductDto>>(result);
         }
+
 
         public async Task<IEnumerable<ProductDto>?> GetProductByCategoriesId(int id)
         {
@@ -102,47 +117,6 @@ namespace VagueVault.Backend.Services.Product
             return _mapper.Map<IEnumerable<ProductDto>>(data);
             
         }
-        public async Task<Categories> AddCategory(int id,string name)
-        {
-            var cat = new Categories
-            {
-                Id = id,
-                Name = name
-            };
-
-            _dbContext.Categories.Add(cat);
-            await _dbContext.SaveChangesAsync();
-            return cat;
-        }
-        public async Task<Status> AddStatus(int id, string name)
-        {
-            var stat = new Status
-            {
-                Id = id,
-                Name = name
-            };
-
-            _dbContext.Status.Add(stat);
-            await _dbContext.SaveChangesAsync();
-            return stat;
-        }
-
-        public async Task<bool> DeleteCategory(int id)
-        {
-            var data = await _dbContext.Categories.FirstOrDefaultAsync(s => s.Id == id);
-            if (data == null) throw new BadRequestException("Invalid Id!");
-            _dbContext.Categories.Remove(data);
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> DeleteStatus(int id)
-         {
-            var data = await _dbContext.Status.FirstOrDefaultAsync(s => s.Id == id);
-            if (data == null) throw new BadRequestException("Invalid Id!");
-            _dbContext.Status.Remove(data);
-            await _dbContext.SaveChangesAsync();
-            return true;
-        }
+        
 }
 }
